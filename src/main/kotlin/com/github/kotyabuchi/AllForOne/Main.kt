@@ -14,5 +14,11 @@ fun main(args: Array<String>) {
         exitProcess(1)
     }
 
-    Bot().bot(token)
+    Bot().bot(token) {
+        command("test", "てすとこまんどぉ") {
+            execute {
+                reply("This is test command!").setEphemeral(true).queue()
+            }
+        }
+    }
 }
