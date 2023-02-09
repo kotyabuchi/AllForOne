@@ -13,6 +13,7 @@ class CommandBuilder {
 
     private val commands = mutableListOf<CommandSet>()
 
+    fun getCommands() = commands.toList()
     fun getCommandAction(commandName: String): (SlashCommandInteractionEvent.() -> Unit)? {
         return commands.firstOrNull {
             it.commandData.name == commandName
@@ -39,7 +40,7 @@ class CommandBuilder {
     }
 }
 
-class CommandSet(commandName: String, description: String) {
+class CommandSet(val commandName: String, val description: String) {
     var action: SlashCommandInteractionEvent.() -> Unit = {}
         private set
     val commandData: SlashCommandData = Commands.slash(commandName, description)
