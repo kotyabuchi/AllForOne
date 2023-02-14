@@ -6,11 +6,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
-class CommandBuilder {
-    companion object {
-        private val logger by LoggerKt()
-    }
-
+object CommandBuilder {
+    private val logger by LoggerKt()
     private val commands = mutableListOf<CommandSet>()
 
     fun getCommands() = commands.toList()
@@ -19,10 +16,9 @@ class CommandBuilder {
             it.commandData.name == commandName
         }?.action
     }
-
-    fun command(commandName: String, description: String = "", action: CommandSet.() -> Unit) {
-        val commandSet = CommandSet(commandName, description)
-        action(commandSet)
+    fun createCommand(command: Command) {
+        val commandSet = CommandSet(command.name, command.description)
+        commandSet.execute(command.action)
         commands.add(commandSet)
     }
 

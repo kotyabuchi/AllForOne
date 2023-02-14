@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import kotlin.reflect.KProperty
 
 class LoggerKt {
-    var logger: Logger? = null
+    private var logger: Logger? = null
 
     operator fun getValue(thisRef: Any, property: KProperty<*>): Logger {
         return logger?:LoggerFactory.getLogger(thisRef.javaClass.name.let {
