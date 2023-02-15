@@ -12,7 +12,20 @@ abstract class Command: ListenerAdapter() {
     abstract val name: String
     abstract val description: String
     open val options: List<OptionData> = listOf()
+    open val subCommands: List<SubCommand> = listOf()
     open val useEvent: Boolean = false
     abstract val action: SlashCommandInteractionEvent.() -> Unit
-    val commandData: CommandData by lazy { Commands.slash(name, description).addOptions(options) }
+    val commandData: CommandData by lazy {
+        if (subCommands.isEmpty()) {
+            Commands.slash(name, description).addOptions(options)
+        } else {
+            Commands.slash(name, description).addSubcommands(subCommands.map { it.subCommandData })
+        }
+    }
+
+    fun getSubCommand(subCommandName: String): SubCommand? {
+        return subCommands.firstOrNull {
+            it.name == subCommandName
+        }
+    }
 }

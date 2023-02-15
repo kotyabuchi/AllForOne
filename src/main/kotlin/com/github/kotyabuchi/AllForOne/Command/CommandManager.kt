@@ -2,17 +2,17 @@ package com.github.kotyabuchi.AllForOne.Command
 
 import com.github.kotyabuchi.AllForOne.LoggerKt
 import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 object CommandManager {
     private val logger by LoggerKt()
     private val commands = mutableListOf<Command>()
 
     fun getCommands() = commands.toList()
-    fun getCommandAction(commandName: String): (SlashCommandInteractionEvent.() -> Unit)? {
+
+    fun getCommand(commandName: String): Command? {
         return commands.firstOrNull {
-            it.commandData.name == commandName
-        }?.action
+            it.name == commandName
+        }
     }
     fun addCommand(command: Command) {
         commands.add(command)
