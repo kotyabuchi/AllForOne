@@ -10,7 +10,7 @@ object CommandListener: ListenerAdapter() {
     private val logger: Logger by LoggerKt()
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         val commandName = event.name
-        CommandBuilder.getCommandAction(commandName)?.let {
+        CommandManager.getCommandAction(commandName)?.let {
             it.invoke(event)
             logger.info("""
                 コマンドが実行されました

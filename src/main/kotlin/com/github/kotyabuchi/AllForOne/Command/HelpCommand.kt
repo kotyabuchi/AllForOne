@@ -12,7 +12,7 @@ object HelpCommand: Command() {
             setTitle("AllForOne - Help")
             setColor(Color(30, 10, 60))
             setDescription("コマンド一覧")
-            CommandBuilder.getCommands().forEach {
+            CommandManager.getCommands().forEach {
                 addField(it.name, it.description, false)
             }
             this

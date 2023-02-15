@@ -1,8 +1,8 @@
 package com.github.kotyabuchi.AllForOne
 
 import com.github.kotyabuchi.AllForOne.Command.Command
-import com.github.kotyabuchi.AllForOne.Command.CommandBuilder
 import com.github.kotyabuchi.AllForOne.Command.CommandListener
+import com.github.kotyabuchi.AllForOne.Command.CommandManager
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -27,10 +27,10 @@ class Bot: ListenerAdapter() {
         jda.awaitReady()
 
         registerCommands.forEach {
-            CommandBuilder.addCommand(it)
+            CommandManager.addCommand(it)
             if (it.useEvent) jda.addEventListener(it)
         }
-        CommandBuilder.register(jda)
+        CommandManager.register(jda)
     }
 
     override fun onReady(event: ReadyEvent) {

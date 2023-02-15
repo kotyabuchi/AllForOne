@@ -4,7 +4,7 @@ import com.github.kotyabuchi.AllForOne.LoggerKt
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
-object CommandBuilder {
+object CommandManager {
     private val logger by LoggerKt()
     private val commands = mutableListOf<Command>()
 
