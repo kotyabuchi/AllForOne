@@ -3,12 +3,10 @@ package com.github.kotyabuchi.AllForOne.Command
 import com.github.kotyabuchi.AllForOne.LoggerKt
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.interactions.commands.build.Commands
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
 object CommandBuilder {
     private val logger by LoggerKt()
-    private val commands = mutableListOf<CommandSet>()
+    private val commands = mutableListOf<Command>()
 
     fun getCommands() = commands.toList()
     fun getCommandAction(commandName: String): (SlashCommandInteractionEvent.() -> Unit)? {
@@ -16,10 +14,8 @@ object CommandBuilder {
             it.commandData.name == commandName
         }?.action
     }
-    fun createCommand(command: Command) {
-        val commandSet = CommandSet(command.name, command.description)
-        commandSet.execute(command.action)
-        commands.add(commandSet)
+    fun addCommand(command: Command) {
+        commands.add(command)
     }
 
     fun register(jda: JDA) {
@@ -29,18 +25,9 @@ object CommandBuilder {
             logger.info("登録済みのコマンドをリセットしました")
             commands.forEach {
                 clua.addCommands(it.commandData)
-                logger.info("コマンド[${it.commandData.name}]を登録しました")
+                logger.info("コマンド[${it.name}]を登録しました")
             }
             clua.queue()
         }
-    }
-}
-
-class CommandSet(val commandName: String, val description: String) {
-    var action: SlashCommandInteractionEvent.() -> Unit = {}
-        private set
-    val commandData: SlashCommandData = Commands.slash(commandName, description)
-    fun execute(action: SlashCommandInteractionEvent.() -> Unit) {
-        this.action = action
     }
 }

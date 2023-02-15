@@ -27,7 +27,7 @@ class Bot: ListenerAdapter() {
         jda.awaitReady()
 
         registerCommands.forEach {
-            CommandBuilder.createCommand(it)
+            CommandBuilder.addCommand(it)
             if (it.useEvent) jda.addEventListener(it)
         }
         CommandBuilder.register(jda)
