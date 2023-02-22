@@ -19,13 +19,12 @@ object CommandManager {
     }
 
     fun register(jda: JDA) {
-        val guild = jda.getGuildById(263784386376237062)
-        guild?.let {
+        jda.guilds.forEach { guild ->
             val clua = guild.updateCommands()
-            logger.info("登録済みのコマンドをリセットしました")
+            logger.info("Guild[${guild.name} - ${guild.id}]の登録済みのコマンドをリセットしました")
             commands.forEach {
                 clua.addCommands(it.commandData)
-                logger.info("コマンド[${it.name}]を登録しました")
+                logger.info("Guild[${guild.name} - ${guild.id}]にコマンド[${it.name}]を登録しました")
             }
             clua.queue()
         }
