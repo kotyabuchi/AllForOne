@@ -64,7 +64,7 @@ object VoteCommand: Command() {
             if (deadline == null) {
                 reply("期限のフォーマットが正しくありません。[$deadlineFormat]").setEphemeral(true).queue()
             } else {
-                val embedBuilder = EmbedBuilder().run {
+                val voteEB = EmbedBuilder().run {
                     setAuthor(user.name, user.avatarUrl, user.avatarUrl)
                     setTitle("アンケート")
                     addField(question, "", false)
@@ -79,16 +79,18 @@ object VoteCommand: Command() {
 
                 val channelId = channel.id
                 val voteId = "${channelId}_$id"
-                reply("投票を作成しました。 ID: $voteId")
+                reply("投票を作成しました。")
                     .addActionRow(Button.danger("close_vote", "投票を締め切る。"))
                     .setEphemeral(true)
                     .queue()
                 user.openPrivateChannel().queue {
-                    val sb = StringBuilder()
-                        .appendLine("投票を作成しました。 ID: ${channelId}_$id")
-                        .appendLine("サーバー: ${guild?.name}")
-                        .appendLine("チャンネル: ${channel.name}")
-                    it.sendMessage(sb.toString()).queue()
+                    val privateEB = EmbedBuilder().run {
+                        setTitle("投票を作成しました")
+                        addField("ID", voteId, false)
+                        addField("サーバー", guild?.name ?: "", true)
+                        addField("チャンネル", channel.name, true)
+                    }
+                    it.sendMessageEmbeds(privateEB.build()).queue()
                 }
 
                 val timer = Timer()
@@ -96,7 +98,7 @@ object VoteCommand: Command() {
                     closeVote(channel, voteId)
                 }
 
-                channel.sendMessageEmbeds(embedBuilder.build()).queue { message ->
+                channel.sendMessageEmbeds(voteEB.build()).queue { message ->
                     val vote = Vote(user, message.id, options[0], timer, *choices.toTypedArray())
                     votes[voteId] = vote
                     repeat(choices.size) {
