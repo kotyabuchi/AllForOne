@@ -1,5 +1,6 @@
 package com.github.kotyabuchi.AllForOne
 
+import com.github.kotyabuchi.AllForOne.Command.DiceCommand
 import com.github.kotyabuchi.AllForOne.Command.HelpCommand
 import com.github.kotyabuchi.AllForOne.Command.VoteCommand
 import com.github.kotyabuchi.AllForOne.Command.RoomCommand
@@ -17,5 +18,5 @@ fun main(args: Array<String>) {
         exitProcess(1)
     }
 
-    Bot().bot(token, HelpCommand, RoomCommand, VoteCommand)
+    Bot().bot(token, HelpCommand, RoomCommand, VoteCommand, DiceCommand)
 }
