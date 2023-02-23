@@ -42,8 +42,7 @@ object CommandListener: ListenerAdapter() {
             .appendLine("[${user.name}]が[${commandName}]コマンドを使用しました")
             .appendLine("UserID: ${user.id}")
         guild?.let {
-            sb.append("[${it.getMember(user)?.nickname}]")
-                .appendLine("GuildName: ${it.name}")
+            sb.appendLine("GuildName: ${it.name}")
                 .appendLine("GuildID: ${it.id}")
         }
         logger.info(sb.toString())
