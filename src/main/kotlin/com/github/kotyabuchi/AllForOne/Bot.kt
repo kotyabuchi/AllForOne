@@ -3,6 +3,7 @@ package com.github.kotyabuchi.AllForOne
 import com.github.kotyabuchi.AllForOne.Command.Command
 import com.github.kotyabuchi.AllForOne.Command.CommandListener
 import com.github.kotyabuchi.AllForOne.Command.CommandManager
+import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -11,8 +12,9 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.Logger
 
-class Bot: ListenerAdapter() {
+object Bot: ListenerAdapter() {
     private val logger: Logger by LoggerKt()
+    lateinit var jda: JDA
 
     fun bot(token: String, vararg registerCommands: Command) {
         val jDABuilder = JDABuilder.createLight(token,
@@ -23,7 +25,7 @@ class Bot: ListenerAdapter() {
             .addEventListeners(CommandListener)
             .enableCache(CacheFlag.VOICE_STATE)
             .setMemberCachePolicy(MemberCachePolicy.ALL)
-        val jda = jDABuilder.build()
+        jda = jDABuilder.build()
         jda.awaitReady()
 
         registerCommands.forEach {
