@@ -1,11 +1,11 @@
 package com.github.kotyabuchi.AllForOne.Command
 
+import com.github.kotyabuchi.AllForOne.transactionWithLogger
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object ChannelRegisterCommand: Command() {
     override val name: String = "channel"
@@ -14,8 +14,7 @@ object ChannelRegisterCommand: Command() {
     override val action: SlashCommandInteractionEvent.() -> Unit = {}
 
     init {
-        transaction {
-            addLogger(StdOutSqlLogger)
+        transactionWithLogger {
             SchemaUtils.create(ChannelTypes, Channels)
 
             ChannelType.values().forEach { type ->
@@ -36,7 +35,7 @@ object ChannelRegisterCommand: Command() {
             if (guildId == null) {
                 reply("このコマンドはサーバー専用です").queue()
             } else {
-                transaction {
+                transactionWithLogger {
                     val eb = EmbedBuilder()
                     val result = Channels.join(ChannelTypes, JoinType.INNER, additionalConstraint = {Channels.channelTypeID eq ChannelTypes.id})
                         .slice(Channels.channelID, ChannelTypes.name)
@@ -78,7 +77,7 @@ object ChannelRegisterCommand: Command() {
             if (guildId == null) {
                 reply("このコマンドはサーバー専用です").queue()
             } else {
-                transaction {
+                transactionWithLogger {
                     val channelTypeId = ChannelTypes.slice(ChannelTypes.id).select { ChannelTypes.name eq channelType }.single()[ChannelTypes.id]
                     Channels.insertIgnore {
                         it[guildID] = guildId

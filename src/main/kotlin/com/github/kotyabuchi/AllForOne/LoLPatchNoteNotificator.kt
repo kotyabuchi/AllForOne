@@ -6,7 +6,6 @@ import com.github.kotyabuchi.AllForOne.Command.Channels
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.jsoup.Jsoup
 import java.time.DayOfWeek
 import java.time.LocalDateTime
@@ -43,7 +42,7 @@ object LoLPatchNoteNotificator {
             setDescription(patchDescription[1])
             setImage(imageUrl)
         }.build()
-        transaction {
+        transactionWithLogger {
             val channelTypeId = ChannelTypes.slice(ChannelTypes.id).select { ChannelTypes.name eq ChannelType.PATCH_NOTE.name }.single()[ChannelTypes.id]
             Channels.select { Channels.channelTypeID eq channelTypeId }.forEach {
                 val guildId = it[Channels.guildID]
