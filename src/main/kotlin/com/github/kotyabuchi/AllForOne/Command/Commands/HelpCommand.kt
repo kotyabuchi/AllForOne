@@ -1,5 +1,7 @@
-package com.github.kotyabuchi.AllForOne.Command
+package com.github.kotyabuchi.AllForOne.Command.Commands
 
+import com.github.kotyabuchi.AllForOne.Command.Command
+import com.github.kotyabuchi.AllForOne.Command.CommandManager
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import java.awt.Color

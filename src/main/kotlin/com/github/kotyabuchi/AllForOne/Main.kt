@@ -1,6 +1,7 @@
 package com.github.kotyabuchi.AllForOne
 
-import com.github.kotyabuchi.AllForOne.Command.*
+import com.github.kotyabuchi.AllForOne.Command.ChannelRegisterCommand
+import com.github.kotyabuchi.AllForOne.Command.Commands.*
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
 
