@@ -3,6 +3,7 @@ package com.github.kotyabuchi.AllForOne.Command.Commands
 import com.github.kotyabuchi.AllForOne.Command.Command
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import kotlin.random.Random
@@ -11,12 +12,12 @@ object DiceCommand: Command() {
     override val name: String = "dice"
     override val description: String = "ダイスを振ります。"
     override val options: List<OptionData> = listOf(
-        OptionData(OptionType.INTEGER, "sides", "ダイスの面の数", true),
-        OptionData(OptionType.INTEGER, "times", "ダイスを振る回数", true)
+        OptionData(OptionType.INTEGER, "sides", "ダイスの面の数", false),
+        OptionData(OptionType.INTEGER, "times", "ダイスを振る回数", false)
     )
     override val action: SlashCommandInteractionEvent.() -> Unit = {
-        val sides = options[0].asInt
-        val times = options[1].asInt
+        val sides = getOption("sides", 100, OptionMapping::getAsInt)
+        val times = getOption("times", 1, OptionMapping::getAsInt)
 
         var rollsStr = ""
         var total = 0
@@ -32,10 +33,15 @@ object DiceCommand: Command() {
         }
         val embedBuilder = EmbedBuilder().run {
             setTitle("${sides}d${times}")
-            addField("合計", total.toString(), true)
-            addField("最大", max.toString(), true)
-            addField("最小", min.toString(), true)
-            addField("各スコア", rollsStr, false)
+
+            if (times > 1) {
+                addField("合計", total.toString(), true)
+                addField("最大", max.toString(), true)
+                addField("最小", min.toString(), true)
+                addField("各スコア", rollsStr, false)
+            } else {
+                addField("結果", total.toString(), false)
+            }
             this
         }
         replyEmbeds(embedBuilder.build()).queue()
