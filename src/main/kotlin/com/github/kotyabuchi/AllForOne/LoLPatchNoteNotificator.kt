@@ -5,28 +5,46 @@ import com.github.kotyabuchi.AllForOne.Command.ChannelTypes
 import com.github.kotyabuchi.AllForOne.Command.Channels
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.javatime.datetime
 import org.jsoup.Jsoup
-import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalAdjusters
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
 
 object LoLPatchNoteNotificator {
+
+    init {
+        transactionWithLogger {
+            SchemaUtils.create(PatchNoteVersion)
+        }
+    }
+
     fun start() {
-        val current = System.currentTimeMillis()
-        val recentWed = LocalDateTime.now()
-            .with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY))
+        val currentTime = System.currentTimeMillis()
+        val recentTime = LocalDateTime.now()
             .truncatedTo(ChronoUnit.HOURS)
             .withHour(5).toEpochSecond(ZoneOffset.ofHours(9)) * 1000
-        val everyWeek = TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS)
-        Timer().schedule(recentWed - current, everyWeek) {
-            notice()
+        val everyDay = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)
+        Timer().schedule(recentTime - currentTime, everyDay) {
+            if (isNeedNotice()) notice()
         }
+    }
+
+    private fun isNeedNotice(): Boolean {
+        val version = Jsoup.connect("https://www.leagueoflegends.com/ja-jp/news/tags/patch-notes/").get().body()
+            .getElementsByAttributeValue("data-testid", "articlelist")
+            .select("li > a > article h2").first()?.text()?.split(" ")?.last() ?: return false
+
+        var found = false
+        transactionWithLogger {
+            found = PatchNoteVersion.select(PatchNoteVersion.version eq version).empty()
+        }
+        return found
     }
 
     private fun notice() {
@@ -51,6 +69,16 @@ object LoLPatchNoteNotificator {
                     guild.getChannelById(MessageChannelUnion::class.java, chanelId)?.sendMessageEmbeds(eb)?.queue()
                 }
             }
+
+            PatchNoteVersion.insertIgnore {
+                it[version] = patchNote.title()
+                it[updateDate] = LocalDateTime.now()
+            }
         }
+    }
+
+    object PatchNoteVersion: Table() {
+        val version = varchar("version", 10)
+        val updateDate = datetime("update_date")
     }
 }
