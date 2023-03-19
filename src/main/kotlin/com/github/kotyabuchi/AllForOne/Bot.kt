@@ -22,6 +22,7 @@ object Bot: ListenerAdapter() {
             GatewayIntent.GUILD_MEMBERS,
             GatewayIntent.GUILD_VOICE_STATES)
             .addEventListeners(this)
+            .addEventListeners(CommandManager)
             .addEventListeners(CommandListener)
             .enableCache(CacheFlag.VOICE_STATE)
             .setMemberCachePolicy(MemberCachePolicy.ALL)
