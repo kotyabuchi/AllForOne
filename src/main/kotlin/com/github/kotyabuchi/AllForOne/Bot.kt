@@ -3,6 +3,7 @@ package com.github.kotyabuchi.AllForOne
 import com.github.kotyabuchi.AllForOne.Command.Command
 import com.github.kotyabuchi.AllForOne.Command.CommandListener
 import com.github.kotyabuchi.AllForOne.Command.CommandManager
+import com.github.kotyabuchi.AllForOne.Command.Commands.HelpCommand
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.events.session.ReadyEvent
@@ -33,6 +34,7 @@ object Bot: ListenerAdapter() {
             CommandManager.addCommand(it)
             if (it.useEvent) jda.addEventListener(it)
         }
+        CommandManager.addCommand(HelpCommand)
         CommandManager.register(jda)
     }
 
