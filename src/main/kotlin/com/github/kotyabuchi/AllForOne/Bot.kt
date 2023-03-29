@@ -36,6 +36,14 @@ object Bot: ListenerAdapter() {
         }
         CommandManager.addCommand(HelpCommand)
         CommandManager.register(jda)
+
+        for (guild in jda.guilds) {
+            if (guild.getRolesByName("CustomManager", false).isNotEmpty()) continue
+            guild.createRole().setName("CustomManager").queue {
+                logger.info("Guild[${guild.name} - ${guild.id}]にロール[CustomManager]を作成しました")
+                RoleManager.registerRole(guild, it)
+            }
+        }
     }
 
     override fun onReady(event: ReadyEvent) {

@@ -2,6 +2,8 @@ package com.github.kotyabuchi.AllForOne
 
 import com.github.kotyabuchi.AllForOne.Command.ChannelRegisterCommand
 import com.github.kotyabuchi.AllForOne.Command.Commands.*
+import com.github.kotyabuchi.AllForOne.LoL.Command.CustomCommand
+import com.github.kotyabuchi.AllForOne.LoL.Command.SummonerCommand
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
 
@@ -22,7 +24,7 @@ class Main {
             }
             DBConnector.registerDBFile(dbFilePath).connect()
 
-            Bot.bot(token, HelpCommand, RoomCommand, VoteCommand, DiceCommand, ChannelRegisterCommand)
+            Bot.bot(token, RoomCommand, VoteCommand, DiceCommand, ChannelRegisterCommand, CustomCommand, SummonerCommand)
 
             LoLPatchNoteNotificator.start()
         }
