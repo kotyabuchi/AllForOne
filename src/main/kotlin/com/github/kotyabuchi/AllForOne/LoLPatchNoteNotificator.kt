@@ -5,9 +5,12 @@ import com.github.kotyabuchi.AllForOne.Command.ChannelTypes
 import com.github.kotyabuchi.AllForOne.Command.Channels
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.sql.select
 import org.jsoup.Jsoup
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -26,10 +29,11 @@ object LoLPatchNoteNotificator {
 
     fun start() {
         val currentTime = System.currentTimeMillis()
-        val recentTime = LocalDateTime.now()
+        var recentTime = LocalDateTime.now()
             .truncatedTo(ChronoUnit.HOURS)
             .withHour(5).toEpochSecond(ZoneOffset.ofHours(9)) * 1000
         val everyDay = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)
+        if (recentTime < currentTime) recentTime += everyDay
         Timer().schedule(recentTime - currentTime, everyDay) {
             if (isNeedNotice()) notice()
         }
@@ -71,7 +75,7 @@ object LoLPatchNoteNotificator {
             }
 
             PatchNoteVersion.insertIgnore {
-                it[version] = patchNote.title()
+                it[version] = patchNote.title().split(" ").last()
                 it[updateDate] = LocalDateTime.now()
             }
         }
